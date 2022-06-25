@@ -12,12 +12,19 @@
 class Prices
 {
 public:
-	std::map<std::string, std::string> GetPrice(std::string func, std::string symbol, std::string output);
+	std::string apiKey;
+public:
+	Prices();
+
+	std::map<std::string, std::string>& GetPriceAsMap(std::string func, std::string symbol, std::string output);
 	
 	std::string GetValue(Poco::JSON::Object::Ptr aoJsonObject, std::string lsKey);
 
-	std::map<std::string, std::string> GetAllValues(Poco::JSON::Object::Ptr aoJsonObject, std::string key);
+	std::map<std::string, std::string>& GetAllValues(Poco::JSON::Object::Ptr aoJsonObject, std::string key);
 
+	void WritePriceInFile(std::string func, std::string symbol, std::string output, std::string filename, std::vector<std::string> format);
+private:
+	Poco::JSON::Object::Ptr GetPrice(std::string func, std::string symbol, std::string output);
 	Poco::JSON::Object::Ptr GetObjectPtr(Poco::JSON::Object::Ptr aoJsonObject, std::string lsKey);
 };
 

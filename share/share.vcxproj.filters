@@ -21,7 +21,7 @@
     <ClCompile Include="src\Prices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Util\util.cpp">
+    <ClCompile Include="src\Util\Date.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp">
@@ -30,12 +30,15 @@
     <ClCompile Include="src\Util\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Prices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Util\util.h">
+    <ClInclude Include="src\Util\Date.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h">
@@ -44,8 +47,11 @@
     <ClInclude Include="src\Util\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\matplotlib-cpp\matplotlib-cpp.h">
+    <ClInclude Include="src\Manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\Util\ApiKey.txt" />
   </ItemGroup>
 </Project>

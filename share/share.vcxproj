@@ -119,11 +119,12 @@
       <AdditionalIncludeDirectories>E:\Yash\shares-proj\share\share\vendor\poco\include;E:\Yash\shares-proj\share\share\vendor\openssl\include;E:\Yash\shares-proj\share\share\vendor\wxwidget\include;E:\Yash\shares-proj\share\share\vendor\wxwidget\include\msvc;E:\Yash\shares-proj\share\share\src;C:\Users\Yash\AppData\Local\Programs\Python\Python310\include;C:\Users\Yash\AppData\Local\Programs\Python\Python310\Lib\site-packages\numpy\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\Yash\shares-proj\share\share\vendor\poco\lib\Debug;C:\Program Files\OpenSSL-Win64\lib;E:\Yash\shares-proj\share\share\vendor\wxwidget\lib\vc_x64_lib;E:\Yash\shares-proj\share\share\vendor\python\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\Yash\shares-proj\share\share\vendor\poco\lib\Debug;C:\Program Files\OpenSSL-Win64\lib;E:\Yash\shares-proj\share\share\vendor\wxwidget\lib\vc_x64_lib;C:\Users\Yash\AppData\Local\Programs\Python\Python310\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>PocoNetd.lib;PocoFoundationd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -152,15 +153,19 @@
     </ClCompile>
     <ClCompile Include="src\Prices.cpp" />
     <ClCompile Include="src\Source.cpp" />
+    <ClCompile Include="src\Manager.cpp" />
     <ClCompile Include="src\Util\Timer.cpp" />
-    <ClCompile Include="src\Util\util.cpp" />
+    <ClCompile Include="src\Util\Date.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\Prices.h" />
+    <ClInclude Include="src\Manager.h" />
     <ClInclude Include="src\Util\Timer.h" />
-    <ClInclude Include="src\Util\util.h" />
-    <ClInclude Include="vendor\matplotlib-cpp\matplotlib-cpp.h" />
+    <ClInclude Include="src\Util\Date.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\Util\ApiKey.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
