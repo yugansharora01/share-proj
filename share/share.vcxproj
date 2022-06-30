@@ -114,18 +114,19 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\Yash\shares-proj\share\share\vendor\poco\include;E:\Yash\shares-proj\share\share\vendor\openssl\include;E:\Yash\shares-proj\share\share\vendor\wxwidget\include;E:\Yash\shares-proj\share\share\vendor\wxwidget\include\msvc;E:\Yash\shares-proj\share\share\src;C:\Users\Yash\AppData\Local\Programs\Python\Python310\include;C:\Users\Yash\AppData\Local\Programs\Python\Python310\Lib\site-packages\numpy\core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Yash\shares-proj\share\share\vendor\wxwidget\include;E:\Yash\shares-proj\share\share\vendor\wxwidget\include\msvc;E:\Yash\shares-proj\share\share\vendor\poco\include;E:\Yash\shares-proj\share\share\vendor\openssl\include;E:\Yash\shares-proj\share\share\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\Yash\shares-proj\share\share\vendor\poco\lib\Debug;C:\Program Files\OpenSSL-Win64\lib;E:\Yash\shares-proj\share\share\vendor\wxwidget\lib\vc_x64_lib;C:\Users\Yash\AppData\Local\Programs\Python\Python310\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PocoNetd.lib;PocoFoundationd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\Yash\shares-proj\share\share\vendor\wxwidget\lib\vc_x64_lib;C:\Program Files\OpenSSL-Win64\lib;E:\Yash\shares-proj\share\share\vendor\poco\lib\Debug;C:\Users\Yash\AppData\Local\Programs\Python\Python310\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;oleacc.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;PocoNetd.lib;PocoFoundationd.lib;wxmsw31ud_core.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,9 +135,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\Yash\shares-proj\share\share\vendor\poco\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +150,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\GUI\cApp.cpp" />
+    <ClCompile Include="src\GUI\cMain.cpp" />
+    <ClCompile Include="src\GUI\wxImagePanel.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -158,6 +163,9 @@
     <ClCompile Include="src\Util\Date.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\GUI\cApp.h" />
+    <ClInclude Include="src\GUI\cMain.h" />
+    <ClInclude Include="src\GUI\wxImagePanel.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\Prices.h" />
     <ClInclude Include="src\Manager.h" />
