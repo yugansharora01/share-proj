@@ -3,7 +3,6 @@
 #include "Prices.h"
 #include "Util/Date.h"
 #include "Util/Timer.h"
-#include <filesystem>
 
 void Manager::make(std::string func, std::string symbol, std::string output)
 {
