@@ -152,12 +152,10 @@
   <ItemGroup>
     <ClCompile Include="src\GUI\cApp.cpp" />
     <ClCompile Include="src\GUI\cMain.cpp" />
-    <ClCompile Include="src\GUI\wxImagePanel.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Prices.cpp" />
-    <ClCompile Include="src\Source.cpp" />
     <ClCompile Include="src\Manager.cpp" />
     <ClCompile Include="src\Util\Timer.cpp" />
     <ClCompile Include="src\Util\Date.cpp" />
@@ -165,7 +163,6 @@
   <ItemGroup>
     <ClInclude Include="src\GUI\cApp.h" />
     <ClInclude Include="src\GUI\cMain.h" />
-    <ClInclude Include="src\GUI\wxImagePanel.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\Prices.h" />
     <ClInclude Include="src\Manager.h" />
