@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Prices.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Util\Date.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,11 +33,14 @@
     <ClCompile Include="src\GUI\cApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ApiFiles\interval.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ApiFiles\yfapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Prices.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Util\Date.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -59,8 +59,14 @@
     <ClInclude Include="src\GUI\cApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ApiFiles\interval.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ApiFiles\yfapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\Util\ApiKey.txt" />
+    <None Include="src\Python\script.py" />
   </ItemGroup>
 </Project>

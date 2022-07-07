@@ -1,32 +1,42 @@
 #include "pch.h"
 #include "Manager.h"
-#include "Prices.h"
-#include "Util/Date.h"
 #include "Util/Timer.h"
+#include "ApiFiles/yfapi.h"
 
-void Manager::make(std::string func, std::string symbol, std::string output)
+void Manager::make(std::string symbol, std::string startDate, std::string endDate)
 {
 	try 
 	{
-		Timer t;
-		std::vector<std::string> vec = { "4. close","Date" };
 		std::string priceFileDirectory = "src/Python/";
-		std::string fileInfo = getRequiredName(func, symbol, output);
-		std::string priceFileName = fileInfo + "-Price.txt";
+		std::string fileInfo = getRequiredName(symbol,startDate,endDate);
+		std::string priceFileName = fileInfo + "-Price.csv";
 		std::string priceFilePath = priceFileDirectory + priceFileName;
 		
 		if (!checkIfFileExists(priceFilePath))
 		{
-			Prices p;
-			t.Mark();
-			p.WritePriceInFile(func, symbol, output, priceFilePath, vec);
-			std::cout << "Time taken to write in file : " << t.Mark() << std::endl;
-
-			std::string destination = "src/Python/" + fileInfo + ".png";
-			std::string command = "python src/Python/main.py " + priceFilePath + " " + destination;
-			t.Mark();
+			std::filesystem::path path = priceFileDirectory;
+			path = path.parent_path();
+			std::string fileToDelete;
+			for (auto const& dir_entry : std::filesystem::directory_iterator{ path })
+			{
+				std::filesystem::path pathOfFile = std::filesystem::absolute(dir_entry);
+				fileToDelete = pathOfFile.string();
+				if (fileToDelete.find(fileInfo) != std::string::npos && pathOfFile.extension().string() != ".csv")
+				{
+					break;
+				}
+				fileToDelete = "";
+			}
+			yfapi::YahooFinanceAPI api;
+			//TO DO: Throw error if unable to get data and exit this function with previous data displayed
+			api.get_ticker_data(symbol, startDate, endDate, true, priceFilePath);
+			std::filesystem::remove(fileToDelete);
+			std::filesystem::remove(fileToDelete + "-Price.txt");
+			std::string destination = priceFileDirectory + fileInfo + ".png";
+			std::string command = "python src/Python/script.py " + priceFilePath + " " + destination;
 			system(command.c_str());
-			std::cout << "time taken to run python script : " << t.Mark() << std::endl;
+			std::ofstream f("imageName.txt");
+			f << destination;
 		}
 		
 	}
@@ -38,10 +48,6 @@ void Manager::make(std::string func, std::string symbol, std::string output)
 	{
 		std::cerr << e.what();
 	}
-	
-	//https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo
-	//https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY_EXTENDED&symbol=IBM&interval=15min&slice=year1month1&apikey=demo
-	//XJ3TKS9LL55045VQ
 
 }
 
@@ -50,24 +56,10 @@ bool Manager::checkIfFileExists(const std::string& filename)
 	return std::filesystem::exists(filename);
 }
 
-std::string Manager::getRequiredName(std::string func, std::string symbol, std::string output)
+std::string Manager::getRequiredName(std::string symbol, std::string startDate, std::string endDate)
 {
-	Date d;
-	d.setAsTodayDate();
-	std::string todaysDate = d.getAsString();
-	if (output == "compact")
-		output = "c";
-	else
-		output = "f"; // for full outputsize
-	if (func == "TIME_SERIES_DAILY")
-		func = "Daily";
-	else
-	{
-		if (func == "TIME_SERIES_INTRADAY")
-			func = "Intra";
-	}
-	std::string path = symbol + "-" + func + "-" + output + "-" + todaysDate;
-	return path;
+	std::string str = symbol + "_" + startDate + "_" + endDate;
+	return str;
 }
 
 

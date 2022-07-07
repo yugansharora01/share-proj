@@ -150,27 +150,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ApiFiles\interval.cpp" />
+    <ClCompile Include="src\ApiFiles\yfapi.cpp" />
     <ClCompile Include="src\GUI\cApp.cpp" />
     <ClCompile Include="src\GUI\cMain.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Prices.cpp" />
     <ClCompile Include="src\Manager.cpp" />
     <ClCompile Include="src\Util\Timer.cpp" />
     <ClCompile Include="src\Util\Date.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ApiFiles\interval.h" />
+    <ClInclude Include="src\ApiFiles\yfapi.h" />
     <ClInclude Include="src\GUI\cApp.h" />
     <ClInclude Include="src\GUI\cMain.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\Prices.h" />
     <ClInclude Include="src\Manager.h" />
     <ClInclude Include="src\Util\Timer.h" />
     <ClInclude Include="src\Util\Date.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\Util\ApiKey.txt" />
+    <None Include="src\Python\script.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

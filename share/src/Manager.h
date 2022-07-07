@@ -2,9 +2,9 @@
 class Manager
 {
 public:
-	void make(std::string func, std::string symbol, std::string output);
+	void make(std::string symbol, std::string startDate, std::string endDate);
 	bool checkIfFileExists(const std::string& filename);
 private:
-	std::string getRequiredName(std::string func, std::string symbol, std::string output);
+	std::string getRequiredName(std::string symbol, std::string startDate, std::string endDate);
 };
 
