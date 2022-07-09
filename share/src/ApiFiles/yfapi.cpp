@@ -64,25 +64,6 @@ namespace yfapi
 
     void YahooFinanceAPI::download_file(std::string url, std::string filename)
     {
-        //CURL* curl;
-        //FILE* fp;
-        //CURLcode res;
-        //curl = curl_easy_init();
-        //if (curl)
-        //{
-        //    fp = fopen(filename.c_str(), "wb");
-        //    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        //    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-        //    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-        //    res = curl_easy_perform(curl);
-
-        //    /* always cleanup */
-        //    curl_easy_cleanup(curl);
-        //    fclose(fp);
-        //}
-
-        // prepare session
-
         Poco::URI uri(url.c_str());
         const Poco::Net::Context::Ptr context = new Poco::Net::Context(Poco::Net::Context::CLIENT_USE, "", "", "", Poco::Net::Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
         Poco::Net::HTTPSClientSession session(uri.getHost(), uri.getPort(), context);
@@ -103,15 +84,9 @@ namespace yfapi
         std::ofstream file(filename);
         std::ostringstream ostr;
         Poco::StreamCopier::copyStream(is, file);
-        //std::string str = ostr.str();
     }
 
-    /*
-     * Returns a DataTable containing data downloaded from YahooFinance.
-     * By default this method will delete the tmp file created by the
-     * download.
-     */
-     //datatable::DataTable YahooFinanceAPI::get_ticker_data(std::string ticker, std::string start, std::string end, bool keep_file)
+    
     void YahooFinanceAPI::get_ticker_data(std::string ticker, std::string start, std::string end, bool keep_file, std::string filename)
     {
         std::string url = build_url(ticker, start, end);
@@ -123,11 +98,9 @@ namespace yfapi
             filename = "tmp_" + filename;
 
         download_file(url, filename);
-        //dt = datatable::DataTable(output_file_name, this->_col_name, true);
 
         if (!keep_file)
             std::remove(filename.c_str());
-        //return dt;
     }
 
     /*

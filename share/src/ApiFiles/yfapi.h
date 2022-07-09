@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-//#define CURL_STATICLIB
-//#include "curl/curl.h"
 #include <Poco/Net/HTTPSClientSession.h>
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>

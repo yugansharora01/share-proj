@@ -367,3 +367,4 @@ FodyWeavers.xsd
 
 #lib files and includes
 /share/vendor/*
+/share/src/Assets/Graphs/*

@@ -1,1 +1,1 @@
-src/Python/TATAPOWER.NS_2021-07-06_2022-07-06.png
+src/Assets/Graphs/TATAPOWER.NS_2021-07-06_2022-07-06.png

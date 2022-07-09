@@ -7,7 +7,7 @@ void Manager::make(std::string symbol, std::string startDate, std::string endDat
 {
 	try 
 	{
-		std::string priceFileDirectory = "src/Python/";
+		std::string priceFileDirectory = "src/Assets/Graphs/";
 		std::string fileInfo = getRequiredName(symbol,startDate,endDate);
 		std::string priceFileName = fileInfo + "-Price.csv";
 		std::string priceFilePath = priceFileDirectory + priceFileName;
@@ -21,7 +21,7 @@ void Manager::make(std::string symbol, std::string startDate, std::string endDat
 			{
 				std::filesystem::path pathOfFile = std::filesystem::absolute(dir_entry);
 				fileToDelete = pathOfFile.string();
-				if (fileToDelete.find(fileInfo) != std::string::npos && pathOfFile.extension().string() != ".csv")
+				if (fileToDelete == fileInfo && pathOfFile.extension().string() != ".csv")
 				{
 					break;
 				}
