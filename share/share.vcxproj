@@ -158,6 +158,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Manager.cpp" />
+    <ClCompile Include="src\Util\JsonParser.cpp" />
     <ClCompile Include="src\Util\Timer.cpp" />
     <ClCompile Include="src\Util\Date.cpp" />
   </ItemGroup>
@@ -168,6 +169,7 @@
     <ClInclude Include="src\GUI\cMain.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\Manager.h" />
+    <ClInclude Include="src\Util\JsonParser.h" />
     <ClInclude Include="src\Util\Timer.h" />
     <ClInclude Include="src\Util\Date.h" />
   </ItemGroup>
