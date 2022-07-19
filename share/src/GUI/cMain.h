@@ -2,27 +2,28 @@
 #include <wx/wx.h>
 #include <wx/srchctrl.h>
 #include <wx/gbsizer.h>
+#include <wx/slider.h>
 
 class cMain : public wxFrame
 {
 public:
 	wxStaticBitmap* image;
-	wxSearchCtrl* searchBar;
-	wxTextCtrl* t;
-	wxButton* button;
-	
+	wxComboBox* exchangeDropdown,*search;
+	std::map<std::string, std::multimap<std::string, std::string>> symbols;
+	std::map<std::string, std::multimap<std::string, int>> mapOfStrings;
 public:
 	cMain();
 	~cMain();
-	void RefreshDashboard(std::string name);
-	std::string getCurrentCompany();
+	void RefreshDashboard(std::string companyName,std::string symbol);
+	
 public:
-	void OnSearch(wxCommandEvent& event);
-	void OnButton(wxCommandEvent& event);
+	void OnTxtChangeInSearchBar(wxCommandEvent& event);
+	void OnTxtEnterInSearchBar(wxCommandEvent& event);
 	
 private:
-	
+	std::string getCurrentCompany();
+	void createSymbolMap();
 private:
-	
+	int searchDepth = 4;
 	wxDECLARE_EVENT_TABLE();
 };
