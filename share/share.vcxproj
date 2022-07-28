@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\GUI\Console.cpp" />
+    <ClCompile Include="src\GUI\SearchBar.cpp" />
     <ClCompile Include="src\ApiFiles\interval.cpp" />
     <ClCompile Include="src\ApiFiles\yfapi.cpp" />
     <ClCompile Include="src\GUI\cApp.cpp" />
@@ -163,6 +165,8 @@
     <ClCompile Include="src\Util\Date.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\GUI\Console.h" />
+    <ClInclude Include="src\GUI\SearchBar.h" />
     <ClInclude Include="src\ApiFiles\interval.h" />
     <ClInclude Include="src\ApiFiles\yfapi.h" />
     <ClInclude Include="src\GUI\cApp.h" />

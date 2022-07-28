@@ -2,9 +2,12 @@
 #include "cMain.h"
 #include "Util/JsonParser.h"
 #include "Manager.h"
+#include <functional>
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
+
 wxEND_EVENT_TABLE()
+
 
 cMain::cMain() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600), wxDEFAULT_FRAME_STYLE | wxCLIP_CHILDREN )
 {
@@ -25,11 +28,13 @@ cMain::cMain() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600)
 
 	std::string str = choices[0].ToStdString();
 	wxArrayString choices1;
+	std::vector<std::string> list;
+	auto it = symbols[str].begin();
 	for (int i = 0; i < 5; i++)
 	{
-		auto it = symbols[str].begin();
-		std::advance(it, i);
 		choices1.push_back(it->first);
+		list.push_back(it->first);
+		it++;
 	}
 
 	exchangeDropdown = new wxComboBox(this, wxID_ANY, wxEmptyString, wxPoint(350, 10), wxSize(100, 20), choices);
@@ -39,7 +44,12 @@ cMain::cMain() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600)
 
 	search->Bind(wxEVT_TEXT, &cMain::OnTxtChangeInSearchBar, this);
 	search->Bind(wxEVT_TEXT_ENTER, &cMain::OnTxtEnterInSearchBar, this);
+	search->Bind(wxEVT_COMBOBOX_DROPDOWN, &cMain::OnDropDown, this);
 
+	searchBar = new SearchBar(this, wxID_ANY, wxPoint(50, 50), wxSize(200, 20));
+	searchBar->setList(list);
+	searchBar->BindEvent(EVENT::TEXT, std::bind(&cMain::OnTxtChangeInSearchBar1, this));
+	searchBar->BindEvent(EVENT::TEXT_ENTER, std::bind(&cMain::OnTxtEnterInSearchBar1, this));
 
 	wxGridBagSizer* sizer = new wxGridBagSizer();
 	sizer->Add(search,wxGBPosition(1,10),wxGBSpan(3,20), wxALL);
@@ -51,6 +61,7 @@ cMain::cMain() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600)
 
 cMain::~cMain()
 {
+	delete searchBar;
 }
 
 void cMain::RefreshDashboard(std::string companyName,std::string symbol)
@@ -87,47 +98,59 @@ void cMain::createSymbolMap()
 	for (auto i = symbols.begin(); i != symbols.end(); i++)
 		symbols[i->first].erase("");
 
-	int depth = searchDepth;
 	for (auto i = symbols.begin(); i != symbols.end(); i++)
 	{
-		//In future there will be something which will fill up the information, till then just deleting the empty entries
-		symbols[i->first].erase(""); 
-		std::string prevstr;
 		int index = 0;
 		for (auto j = symbols[i->first].begin(); j != symbols[i->first].end(); j++)
 		{
-			if (j->first.find("tata p") != std::string::npos)
+			std::string companyName = j->first;
+			for (int i = 0; i < companyName.length(); i++)
 			{
-				std::cout << "LOL";
+				companyName[i] = std::tolower(companyName[i]);
 			}
-			for (int k = 0; k < depth; k++)
-			{
-				
-				if (j->first.size() > k) // insert only if the string is long enough to call j->first[k]
-				{
-					if (prevstr.size() <= k)
-					{
-						mapOfStrings[i->first].insert({ j->first.substr(0,k+1),index });
-					}
-					else
-					{
-						if (prevstr[k] != j->first[k])
-						{
-							mapOfStrings[i->first].insert({ j->first.substr(0,k+1),index });
-						}
-					}
-				}
-				
 
+			std::vector<std::string> wordList;
+
+			std::stringstream ss(companyName);
+			std::string item;
+			while (std::getline(ss, item, ' ')) 
+			{
+				wordList.push_back(item);
 			}
-			prevstr = j->first.substr(0, depth);
+			for (int k = 0; k < wordList.size(); k++)
+			{
+				std::shared_ptr<Node> node;
+				if (!nodeTree.contains(i->first))
+				{
+					std::shared_ptr<Node> temp = std::make_shared<Node>();
+					nodeTree.insert({ i->first,temp });
+				}
+				node = nodeTree[i->first];
+
+				for (int x = 0; x < wordList[k].size(); x++)
+				{
+					char ch = wordList[k].at(x);
+					ch = std::tolower(ch);
+					if (!node->nodes.contains(ch))
+					{
+						std::shared_ptr<Node> temp = std::make_shared<Node>(node->str + ch);
+						//temp->setChar(node->str + ch);
+						node->nodes.insert({ ch,temp });
+					}
+
+					node = node->nodes[ch];
+					if (node->indices.size() <= k)
+					{
+						node->indices.resize(k + 1);
+					}
+					node->indices[k].push_back(index);
+				}
+			}
+
 			index++;
 		}
-		
 	}
 }
-
-
 
 void cMain::OnTxtChangeInSearchBar(wxCommandEvent& event)
 {
@@ -138,82 +161,134 @@ void cMain::OnTxtChangeInSearchBar(wxCommandEvent& event)
 		searchstr[i] = std::tolower(searchstr[i]);
 	}
 	std::string exchange = exchangeDropdown->GetValue().ToStdString();
-	std::string str = searchstr.substr(0, depth);
-	for (int i = 0; i < depth; i++)
+
+	std::vector<std::string> wordList;
+
+	std::stringstream ss(searchstr);
+	std::string item;
+	while (std::getline(ss, item, ' '))
 	{
-		auto it = mapOfStrings[exchange].find(str);
-		if (it != mapOfStrings[exchange].end())
+		wordList.push_back(item);
+	}
+
+	std::vector<int> indices;
+
+	for (std::vector<std::string>::iterator word = wordList.begin(); word != wordList.end(); word++)
+	{
+		std::shared_ptr<Node> node;
+		node = nodeTree[exchange];
+		for (int x = 0; x < word->size(); x++)
 		{
-			index = it->second;
-			break;
+			char ch = word->at(x);
+			if (!node->nodes.contains(ch))
+			{
+				break;
+			}
+			node = node->nodes[ch];
 		}
-		if(!str.empty())
-			str.pop_back();
+		for (auto it = node->indices.begin(); it != node->indices.end(); it++)
+		{
+			for (auto it1 = it->begin(); it1 != it->end(); it1++)
+			{
+				auto pos = std::find(indices.begin(), indices.end(), *it1);
+				if (pos != indices.end())
+				{
+					indices.erase(pos);
+					indices.insert(indices.begin(), *it1);
+				}
+				else
+				{
+					indices.push_back(*it1);
+				}					
+			}
+			
+		}
 	}
 
 	auto it = symbols[exchange].begin();
 	std::advance(it, index);
 
-	// the index might become more accurate (for the characters after the depth)
-	if (str == searchstr.substr(0, depth) && searchstr.size() > depth)
+	for (int i = 0; i < 5; i++)
 	{
-		
-		while (nextIndex == 0)
+		if (i >= indices.size())
+			break;
+		auto j = symbols[exchange].begin();
+		std::advance(j, indices[i]);
+		search->SetString(i, j->first);
+	}
+	
+}
+
+void cMain::OnDropDown(wxCommandEvent& event)
+{
+	auto val = search->GetValue();
+}
+
+void cMain::OnTxtChangeInSearchBar1()
+{
+	int depth = searchDepth, index = 0, nextIndex = 0;
+	std::string searchstr = searchBar->getValue();
+	for (int i = 0; i < searchstr.length(); i++)
+	{
+		searchstr[i] = std::tolower(searchstr[i]);
+	}
+	std::string exchange = exchangeDropdown->GetValue().ToStdString();
+
+	std::vector<std::string> wordList;
+
+	std::stringstream ss(searchstr);
+	std::string item;
+	while (std::getline(ss, item, ' '))
+	{
+		wordList.push_back(item);
+	}
+
+	std::vector<int> indices;
+
+	for (std::vector<std::string>::iterator word = wordList.begin(); word != wordList.end(); word++)
+	{
+		std::shared_ptr<Node> node;
+		node = nodeTree[exchange];
+		for (int x = 0; x < word->size(); x++)
 		{
-			std::multimap<std::string, int>::iterator k;
-			//for(int )
-			if (str[depth - 1] != 'z')
+			char ch = word->at(x);
+			if (!node->nodes.contains(ch))
 			{
-				str[depth - 1] = str[depth - 1] + 1;
-				k = mapOfStrings[exchange].find(str);
+				break;
 			}
-			else
+			node = node->nodes[ch];
+		}
+		auto temp = indices;
+		for (auto it = node->indices.begin(); it != node->indices.end(); it++)
+		{
+			for (auto it1 = it->begin(); it1 != it->end(); it1++)
 			{
-				if (depth - 1 != 0)
+				auto pos = std::find(temp.begin(), temp.end(), *it1);
+				if (pos != temp.end())
 				{
-					depth--;
-					str[depth - 1] = str[depth - 1] + 1;
-					k = mapOfStrings[exchange].find(str);
+					indices.erase(std::find(indices.begin(), indices.end(), *it1));
+					indices.insert(indices.begin(), *it1);
 				}
 				else
 				{
-					k = mapOfStrings[exchange].end();
+					indices.push_back(*it1);
 				}
 			}
-			
-			if (k != mapOfStrings[exchange].end())
-			{
-				nextIndex = k->second;
-			}
-			else
-			{
-				if(depth == 0)
-					nextIndex = symbols[exchange].size() - 1;
-			}
-		}
-		
-		auto iterator = symbols[exchange].begin();
-		std::advance(iterator, nextIndex);
 
-
-		for (auto j = it; j != iterator; j++)
-		{
-			auto i = j->first.find(searchstr);
-			if (i != std::string::npos)
-			{
-				it = j;
-				break;
-			}
 		}
-		
 	}
+
+	auto it = symbols[exchange].begin();
+	std::advance(it, index);
 
 	for (int i = 0; i < 5; i++)
 	{
-		search->SetString(i, it->first);
-		it++;
+		if (i >= indices.size())
+			break;
+		auto j = symbols[exchange].begin();
+		std::advance(j, indices[i]);
+		searchBar->setString(i, j->first);
 	}
-	
 }
 
 void cMain::OnTxtEnterInSearchBar(wxCommandEvent& event)
@@ -226,5 +301,17 @@ void cMain::OnTxtEnterInSearchBar(wxCommandEvent& event)
 		RefreshDashboard(it->first,it->second);
 	}
 }
+
+void cMain::OnTxtEnterInSearchBar1()
+{
+	std::string value = searchBar->getValue();
+	std::string exchange = exchangeDropdown->GetValue().ToStdString();
+	auto it = symbols[exchange].find(value);
+	if (it != symbols[exchange].end())
+	{
+		RefreshDashboard(it->first, it->second);
+	}
+}
+
 
 

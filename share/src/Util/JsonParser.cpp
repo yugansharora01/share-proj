@@ -66,17 +66,7 @@ void JsonParser::GetMapofData(std::string filename, std::map<std::string, std::m
 			Poco::JSON::Object::Ptr p = arr->getObject(i);
 			
 			std::string symbol = p->begin()->second.convert<std::string>();
-			for (int i = 0; i < symbol.length(); i++)
-			{
-				symbol[i] = std::tolower(symbol[i]);
-			}
-
 			std::string companyName = p->begin()->first;
-
-			for (int i = 0; i < companyName.length(); i++)
-			{
-				companyName[i] = std::tolower(companyName[i]);
-			}
 
 			std::string exchange = GetValue(p,"exchange");
 			map[exchange].insert({ companyName,symbol });

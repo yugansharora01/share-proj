@@ -15,10 +15,10 @@ cApp::~cApp()
 
 bool cApp::OnInit()
 {
+	console = new Console();
+	console->Show();
 	createData();
 	m_frame1 = new cMain();
-	
-
 	m_frame1->Show();
 
 	return true;
@@ -34,9 +34,9 @@ void cApp::createData()
 
 		JsonParser j;
 		std::string ret = j.parseFromFile("src/Assets/symbols/INDIAData.json", "src/Assets/symbols/IndiajsonSymbols.json");
-		//if (ret != "OK")
-			//m_frame1->t->SetValue(ret);
-		//j.parseFromFile("src/Assets/symbols/USData.json", "src/Assets/symbols/UsSymbols.txt");
+		if (ret != "OK")
+			console->add(LogType::ERROR_STRING,ret);
+		//j.parseFromFile("src/Assets/symbols/USData.json", "src/Assets/symbols/UsjsonSymbols.txt");
 	}
 
 	//In future it will read some file and generate the dashboard according to that
