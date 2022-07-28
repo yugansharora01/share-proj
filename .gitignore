@@ -366,3 +366,5 @@ FodyWeavers.xsd
 #lib files and includes
 /share/vendor/*
 /share/src/Assets/Graphs/*
+share/share.vcxproj
+share/share.vcxproj.filters

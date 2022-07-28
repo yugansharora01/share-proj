@@ -12,7 +12,6 @@ Console::Console() : wxFrame(nullptr, wxID_ANY, "Logging Console", wxPoint(100, 
 Console::~Console()
 {
 	text->Destroy();
-	delete text;
 }
 
 void Console::add(LogType type, std::string str)
