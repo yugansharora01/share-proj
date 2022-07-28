@@ -1,22 +1,25 @@
 #include "pch.h"
-#include "cMain.h"
+#include "DashBoard.h"
 #include "Util/JsonParser.h"
 #include "Manager.h"
-#include <functional>
 
-wxBEGIN_EVENT_TABLE(cMain, wxFrame)
+wxBEGIN_EVENT_TABLE(DashBoard, wxFrame)
 
 wxEND_EVENT_TABLE()
 
 
-cMain::cMain() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600), wxDEFAULT_FRAME_STYLE | wxCLIP_CHILDREN )
+DashBoard::DashBoard() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600), wxDEFAULT_FRAME_STYLE | wxCLIP_CHILDREN | wxVSCROLL)
 {
 	std::ifstream file;
 	file.open("imageName.txt");
 	std::string line;
 	std::getline(file, line);
-	wxPNGHandler* handler = new wxPNGHandler;
-	wxImage::AddHandler(handler);
+	auto handler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
+	if (!handler)
+	{
+		wxPNGHandler* handler = new wxPNGHandler;
+		wxImage::AddHandler(handler);
+	}
 	image = new wxStaticBitmap(this, wxID_ANY, wxBitmap(line, wxBITMAP_TYPE_PNG), wxPoint(50, 100), wxSize(800, 500));
 
 	createSymbolMap();
@@ -41,15 +44,15 @@ cMain::cMain() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600)
 	exchangeDropdown->SetValue(choices[0]);
 
 	search = new wxComboBox(this, wxID_ANY, wxEmptyString, wxPoint(10, 10), wxSize(200, 30), choices1, wxTE_PROCESS_ENTER);
-
-	search->Bind(wxEVT_TEXT, &cMain::OnTxtChangeInSearchBar, this);
-	search->Bind(wxEVT_TEXT_ENTER, &cMain::OnTxtEnterInSearchBar, this);
-	search->Bind(wxEVT_COMBOBOX_DROPDOWN, &cMain::OnDropDown, this);
+	search->AutoComplete(NULL);
+	search->Bind(wxEVT_TEXT, &DashBoard::OnTxtChangeInSearchBar, this);
+	search->Bind(wxEVT_TEXT_ENTER, &DashBoard::OnTxtEnterInSearchBar, this);
+	search->Bind(wxEVT_COMBOBOX_DROPDOWN, &DashBoard::OnDropDown, this);
 
 	searchBar = new SearchBar(this, wxID_ANY, wxPoint(50, 50), wxSize(200, 20));
 	searchBar->setList(list);
-	searchBar->BindEvent(EVENT::TEXT, std::bind(&cMain::OnTxtChangeInSearchBar1, this));
-	searchBar->BindEvent(EVENT::TEXT_ENTER, std::bind(&cMain::OnTxtEnterInSearchBar1, this));
+	searchBar->BindEvent(EVENT::TEXT, std::bind(&DashBoard::OnTxtChangeInSearchBar1, this));
+	searchBar->BindEvent(EVENT::TEXT_ENTER, std::bind(&DashBoard::OnTxtEnterInSearchBar1, this));
 
 	wxGridBagSizer* sizer = new wxGridBagSizer();
 	sizer->Add(search,wxGBPosition(1,10),wxGBSpan(3,20), wxALL);
@@ -59,21 +62,35 @@ cMain::cMain() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600)
 	
 }
 
-cMain::~cMain()
+DashBoard::~DashBoard()
 {
+	search->Destroy();
+	exchangeDropdown->Destroy();
+	image->Destroy();
 	delete searchBar;
 }
 
-void cMain::RefreshDashboard(std::string companyName,std::string symbol)
+void DashBoard::RefreshDashboard(std::string companyName,std::string symbol)
 {
 	if (companyName != getCurrentCompany())
 	{
 		Manager m;
 		m.make(symbol, "2021-07-06", "2022-07-06");
+		std::ifstream file;
+		file.open("imageName.txt");
+		std::string line;
+		std::getline(file, line);
+		auto handler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
+		if (!handler)
+		{
+			wxPNGHandler* handler = new wxPNGHandler;
+			wxImage::AddHandler(handler);
+		}
+		image->SetBitmap(wxBitmap(line, wxBITMAP_TYPE_PNG));
 	}
 }
 
-std::string cMain::getCurrentCompany()
+std::string DashBoard::getCurrentCompany()
 {
 	std::ifstream file;
 	file.open("imageName.txt");
@@ -91,7 +108,7 @@ std::string cMain::getCurrentCompany()
 	return line.substr(0,i);
 }
 
-void cMain::createSymbolMap()
+void DashBoard::createSymbolMap()
 {
 	JsonParser j;
 	j.GetMapofData("src/Assets/symbols/IndiajsonSymbols.json",symbols);
@@ -152,7 +169,7 @@ void cMain::createSymbolMap()
 	}
 }
 
-void cMain::OnTxtChangeInSearchBar(wxCommandEvent& event)
+void DashBoard::OnTxtChangeInSearchBar(wxCommandEvent& event)
 {
 	int depth = searchDepth,index = 0,nextIndex = 0;
 	std::string searchstr = search->GetValue().ToStdString();
@@ -215,16 +232,17 @@ void cMain::OnTxtChangeInSearchBar(wxCommandEvent& event)
 		auto j = symbols[exchange].begin();
 		std::advance(j, indices[i]);
 		search->SetString(i, j->first);
+		search->AutoComplete(NULL);
 	}
 	
 }
 
-void cMain::OnDropDown(wxCommandEvent& event)
+void DashBoard::OnDropDown(wxCommandEvent& event)
 {
 	auto val = search->GetValue();
 }
 
-void cMain::OnTxtChangeInSearchBar1()
+void DashBoard::OnTxtChangeInSearchBar1()
 {
 	int depth = searchDepth, index = 0, nextIndex = 0;
 	std::string searchstr = searchBar->getValue();
@@ -291,7 +309,7 @@ void cMain::OnTxtChangeInSearchBar1()
 	}
 }
 
-void cMain::OnTxtEnterInSearchBar(wxCommandEvent& event)
+void DashBoard::OnTxtEnterInSearchBar(wxCommandEvent& event)
 {
 	std::string value = search->GetValue().ToStdString();
 	std::string exchange = exchangeDropdown->GetValue().ToStdString();
@@ -302,7 +320,7 @@ void cMain::OnTxtEnterInSearchBar(wxCommandEvent& event)
 	}
 }
 
-void cMain::OnTxtEnterInSearchBar1()
+void DashBoard::OnTxtEnterInSearchBar1()
 {
 	std::string value = searchBar->getValue();
 	std::string exchange = exchangeDropdown->GetValue().ToStdString();

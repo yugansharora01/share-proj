@@ -30,6 +30,7 @@ private:
 	void OnLeavingChoices(wxMouseEvent& event);
 	void OnButtonHover(wxMouseEvent& event);
 	void OnButtonLeave(wxMouseEvent& event);
+	void OnKillFocus(wxFocusEvent& event);
 private:
 	wxBitmapButton* btn;
 	wxTextCtrl* textCtrl;

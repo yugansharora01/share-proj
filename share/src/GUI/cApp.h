@@ -1,5 +1,5 @@
 #pragma once
-#include "cMain.h"
+#include "DashBoard.h"
 #include "Console.h"
 
 class cApp : public wxApp
@@ -11,6 +11,6 @@ public:
 	void createData();
 
 private:
-	cMain* m_frame1 = nullptr;
+	DashBoard* m_frame1 = nullptr;
 	Console* console = nullptr;
 };

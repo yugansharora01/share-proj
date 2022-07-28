@@ -21,6 +21,7 @@ SearchBar::SearchBar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
 	textCtrl->Bind(wxEVT_TEXT_ENTER, &SearchBar::OnTextEnter, this);
 	
 	Bind(wxEVT_SIZE, &SearchBar::OnSize, this);
+	Bind(wxEVT_KILL_FOCUS, &SearchBar::OnKillFocus, this);
 	windowSize = size;
 }
 
@@ -165,5 +166,11 @@ void SearchBar::OnButtonHover(wxMouseEvent& event)
 void SearchBar::OnButtonLeave(wxMouseEvent& event)
 {
 	btn->SetWindowStyle(wxBORDER_NONE);
+}
+
+void SearchBar::OnKillFocus(wxFocusEvent& event)
+{
+	isDropDown = false;
+	this->SetSize(windowSize);
 }
 

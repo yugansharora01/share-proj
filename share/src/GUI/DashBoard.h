@@ -23,7 +23,7 @@ public:
 	}
 };
 
-class cMain : public wxFrame
+class DashBoard : public wxFrame
 {
 public:
 	SearchBar* searchBar;
@@ -33,8 +33,8 @@ public:
 	std::map<std::string, std::multimap<std::string, int>> mapOfStrings;
 	std::map<std::string, std::shared_ptr<Node>> nodeTree;
 public:
-	cMain();
-	~cMain();
+	DashBoard();
+	~DashBoard();
 	void RefreshDashboard(std::string companyName,std::string symbol);
 	
 public:
