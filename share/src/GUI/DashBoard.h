@@ -33,7 +33,7 @@ public:
 	std::map<std::string, std::multimap<std::string, int>> mapOfStrings;
 	std::map<std::string, std::shared_ptr<Node>> nodeTree;
 public:
-	DashBoard();
+	DashBoard(wxWindow* console);
 	~DashBoard();
 	void RefreshDashboard(std::string companyName,std::string symbol);
 	
@@ -43,6 +43,7 @@ public:
 	void OnTxtChangeInSearchBar1();
 	void OnTxtEnterInSearchBar(wxCommandEvent& event);
 	void OnTxtEnterInSearchBar1();
+	void OnClose(wxCloseEvent& event);
 
 	
 private:
@@ -50,5 +51,6 @@ private:
 	void createSymbolMap();
 private:
 	int searchDepth = 4;
+	wxWindow* Console;
 	wxDECLARE_EVENT_TABLE();
 };

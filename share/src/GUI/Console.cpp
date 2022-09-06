@@ -6,7 +6,7 @@ std::vector<std::pair<LogType, std::string>> Console::vec;
 
 Console::Console() : wxFrame(nullptr, wxID_ANY, "Logging Console", wxPoint(100, 100), wxSize(200, 200), wxDEFAULT_FRAME_STYLE | wxCLIP_CHILDREN)
 {
-	text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxPoint(0, 0), wxSize(200, 200));
+	text = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxPoint(0, 0), wxSize(200, 200), wxTE_MULTILINE);
 }
 
 Console::~Console()

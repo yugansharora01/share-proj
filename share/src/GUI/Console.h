@@ -3,6 +3,7 @@
 
 enum LogType
 {
+	MSG_STRING,
 	WARNING_STRING,
 	ERROR_STRING
 };

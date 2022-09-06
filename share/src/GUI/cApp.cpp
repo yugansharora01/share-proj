@@ -16,9 +16,9 @@ cApp::~cApp()
 bool cApp::OnInit()
 {
 	console = new Console();
-	console->Show();
 	createData();
-	m_frame1 = new DashBoard();
+	console->Show();
+	m_frame1 = new DashBoard(console);
 	m_frame1->Show();
 
 	return true;

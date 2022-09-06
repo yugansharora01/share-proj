@@ -11,6 +11,7 @@ void Manager::make(std::string symbol, std::string startDate, std::string endDat
 		std::string fileInfo = getRequiredName(symbol,startDate,endDate);
 		std::string priceFileName = fileInfo + "-Price.csv";
 		std::string priceFilePath = priceFileDirectory + priceFileName;
+		std::string destination = priceFileDirectory + fileInfo + ".png";
 		
 		if (!checkIfFileExists(priceFilePath))
 		{
@@ -32,13 +33,12 @@ void Manager::make(std::string symbol, std::string startDate, std::string endDat
 			api.get_ticker_data(symbol, startDate, endDate, true, priceFilePath);
 			std::filesystem::remove(fileToDelete);
 			std::filesystem::remove(fileToDelete + "-Price.txt");
-			std::string destination = priceFileDirectory + fileInfo + ".png";
 			std::string command = "python src/Python/script.py " + priceFilePath + " " + destination;
 			system(command.c_str());
-			std::ofstream f("imageName.txt");
-			f << destination;
+			
 		}
-		
+		std::ofstream f("imageName.txt");
+		f << destination;
 	}
 	catch (Poco::Exception& ex)
 	{

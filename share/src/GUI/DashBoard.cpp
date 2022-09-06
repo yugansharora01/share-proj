@@ -2,14 +2,41 @@
 #include "DashBoard.h"
 #include "Util/JsonParser.h"
 #include "Manager.h"
+#include "Console.h"
+#include <wx/event.h>
 
 wxBEGIN_EVENT_TABLE(DashBoard, wxFrame)
 
 wxEND_EVENT_TABLE()
 
+//bool cmp(std::pair<int, int>& a,std::pair<int, int>& b)
+//{
+//	return a.second < b.second;
+//}
+//
+//std::vector<std::pair<int, int>> SortMapOnValues(std::map<int, int>& M)
+//{
+//	
+//
+//	// Declare vector of pairs
+//	std::vector<std::pair<int, int>> A;
+//
+//	// Copy key-value pair from Map
+//	// to vector of pairs
+//	for (auto& it : M) {
+//		A.push_back(it);
+//	}
+//
+//	// Sort using comparator function
+//	std::sort(A.begin(), A.end(), cmp);
+//
+//	return A;
+//}
 
-DashBoard::DashBoard() : wxFrame(nullptr,wxID_ANY,"App",wxPoint(100,100),wxSize(800,600), wxDEFAULT_FRAME_STYLE | wxCLIP_CHILDREN | wxVSCROLL)
+DashBoard::DashBoard(wxWindow* console) : wxFrame(nullptr, wxID_ANY,"App",wxPoint(100,100),wxSize(800,600), wxDEFAULT_FRAME_STYLE | wxCLIP_CHILDREN | wxVSCROLL)
 {
+	Console = console;
+	Bind(wxEVT_CLOSE_WINDOW, &DashBoard::OnClose, this);
 	std::ifstream file;
 	file.open("imageName.txt");
 	std::string line;
@@ -189,6 +216,7 @@ void DashBoard::OnTxtChangeInSearchBar(wxCommandEvent& event)
 	}
 
 	std::vector<int> indices;
+	std::map<int, int> MapOfIndices;
 
 	for (std::vector<std::string>::iterator word = wordList.begin(); word != wordList.end(); word++)
 	{
@@ -207,7 +235,15 @@ void DashBoard::OnTxtChangeInSearchBar(wxCommandEvent& event)
 		{
 			for (auto it1 = it->begin(); it1 != it->end(); it1++)
 			{
-				auto pos = std::find(indices.begin(), indices.end(), *it1);
+				if (MapOfIndices.contains(*it1))
+				{
+					MapOfIndices[*it1]++;
+				}
+				else
+				{
+					MapOfIndices.insert({ *it1,1 });
+				}
+				/*auto pos = std::find(indices.begin(), indices.end(), *it1);
 				if (pos != indices.end())
 				{
 					indices.erase(pos);
@@ -216,11 +252,16 @@ void DashBoard::OnTxtChangeInSearchBar(wxCommandEvent& event)
 				else
 				{
 					indices.push_back(*it1);
-				}					
+				}	*/				
 			}
-			
 		}
 	}
+	
+	/*auto vec = SortMapOnValues(MapOfIndices);
+	for (auto it = vec.rbegin(); it != vec.rend(); it++)
+	{
+		indices.push_back(it->first);
+	}*/
 
 	auto it = symbols[exchange].begin();
 	std::advance(it, index);
@@ -262,9 +303,12 @@ void DashBoard::OnTxtChangeInSearchBar1()
 	}
 
 	std::vector<int> indices;
+	std::map<int, int> MapOfIndices;
+	std::vector<std::unordered_set<int>> vecOfIndicesSet;
 
 	for (std::vector<std::string>::iterator word = wordList.begin(); word != wordList.end(); word++)
 	{
+		std::unordered_set<int> wordIndices;
 		std::shared_ptr<Node> node;
 		node = nodeTree[exchange];
 		for (int x = 0; x < word->size(); x++)
@@ -276,28 +320,80 @@ void DashBoard::OnTxtChangeInSearchBar1()
 			}
 			node = node->nodes[ch];
 		}
-		auto temp = indices;
 		for (auto it = node->indices.begin(); it != node->indices.end(); it++)
 		{
 			for (auto it1 = it->begin(); it1 != it->end(); it1++)
 			{
-				auto pos = std::find(temp.begin(), temp.end(), *it1);
-				if (pos != temp.end())
+				wordIndices.insert(*it1);
+				/*if (MapOfIndices.contains(*it1))
 				{
-					indices.erase(std::find(indices.begin(), indices.end(), *it1));
-					indices.insert(indices.begin(), *it1);
+					MapOfIndices[*it1]++;
+					if(MapOfIndices[*it1] >= 3)
+						Console::add(LogType::MSG_STRING, std::to_string(*it1));
 				}
 				else
 				{
-					indices.push_back(*it1);
-				}
+					MapOfIndices.insert({ *it1,1 });
+				}*/
 			}
+		}
+		vecOfIndicesSet.push_back(wordIndices);
+	}
 
+	for (auto it = vecOfIndicesSet.begin(); it != vecOfIndicesSet.end(); it++)
+	{
+		for (auto it1 = it->begin(); it1 != it->end(); it1++)
+		{
+			if (MapOfIndices.contains(*it1))
+			{
+				MapOfIndices[*it1]++;
+			}
+			else
+			{
+				MapOfIndices.insert({ *it1,1 });
+			}
 		}
 	}
 
-	auto it = symbols[exchange].begin();
-	std::advance(it, index);
+	std::vector<std::vector<int>> v;
+
+	for (auto it = MapOfIndices.begin(); it != MapOfIndices.end(); it++)
+	{
+		if (v.size() <= it->second)
+			v.resize(it->second + 1);
+		v[it->second].push_back(it->first);
+	}
+
+	for (auto it = v.rbegin(); it != v.rend(); it++)
+	{
+		for (auto it1 = it->begin(); it1 != it->end(); it1++)
+		{
+			indices.push_back(*it1);
+		}
+		if (indices.size() > 10)
+			break;
+	}
+	std::vector<int> temp;
+	temp = indices;
+	int i = 0;
+	for (auto it = indices.begin(); it != indices.end(); it++)
+	{
+		auto j = symbols[exchange].begin();
+		std::advance(j, *it);
+		std::string name = j->first;
+		for (int i = 0; i < name.length(); i++)
+		{
+			name[i] = std::tolower(name[i]);
+		}
+		if (name.find(searchstr) == 0)
+		{
+			int val = *it;
+			indices.erase(it);
+			indices.insert(indices.begin() + i, val);
+			it = indices.begin() + i;
+			i++;
+		}
+	}
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -329,6 +425,12 @@ void DashBoard::OnTxtEnterInSearchBar1()
 	{
 		RefreshDashboard(it->first, it->second);
 	}
+}
+
+void DashBoard::OnClose(wxCloseEvent& event)
+{
+	Console->Destroy();
+	this->Destroy();
 }
 
 
