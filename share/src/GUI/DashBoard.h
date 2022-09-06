@@ -28,7 +28,7 @@ class DashBoard : public wxFrame
 public:
 	SearchBar* searchBar;
 	wxStaticBitmap* image;
-	wxComboBox* exchangeDropdown,*search;
+	wxComboBox* exchangeDropdown;//,*search;
 	std::map<std::string, std::multimap<std::string, std::string>> symbols;
 	std::map<std::string, std::multimap<std::string, int>> mapOfStrings;
 	std::map<std::string, std::shared_ptr<Node>> nodeTree;
@@ -38,11 +38,8 @@ public:
 	void RefreshDashboard(std::string companyName,std::string symbol);
 	
 public:
-	void OnTxtChangeInSearchBar(wxCommandEvent& event);
-	void OnDropDown(wxCommandEvent& event);
-	void OnTxtChangeInSearchBar1();
-	void OnTxtEnterInSearchBar(wxCommandEvent& event);
-	void OnTxtEnterInSearchBar1();
+	void OnTxtChangeInSearchBar();
+	void OnTxtEnterInSearchBar();
 	void OnClose(wxCloseEvent& event);
 
 	

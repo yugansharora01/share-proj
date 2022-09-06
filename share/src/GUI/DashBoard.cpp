@@ -9,30 +9,6 @@ wxBEGIN_EVENT_TABLE(DashBoard, wxFrame)
 
 wxEND_EVENT_TABLE()
 
-//bool cmp(std::pair<int, int>& a,std::pair<int, int>& b)
-//{
-//	return a.second < b.second;
-//}
-//
-//std::vector<std::pair<int, int>> SortMapOnValues(std::map<int, int>& M)
-//{
-//	
-//
-//	// Declare vector of pairs
-//	std::vector<std::pair<int, int>> A;
-//
-//	// Copy key-value pair from Map
-//	// to vector of pairs
-//	for (auto& it : M) {
-//		A.push_back(it);
-//	}
-//
-//	// Sort using comparator function
-//	std::sort(A.begin(), A.end(), cmp);
-//
-//	return A;
-//}
-
 DashBoard::DashBoard(wxWindow* console) : wxFrame(nullptr, wxID_ANY,"App",wxPoint(100,100),wxSize(800,600), wxDEFAULT_FRAME_STYLE | wxCLIP_CHILDREN | wxVSCROLL)
 {
 	Console = console;
@@ -70,19 +46,12 @@ DashBoard::DashBoard(wxWindow* console) : wxFrame(nullptr, wxID_ANY,"App",wxPoin
 	exchangeDropdown = new wxComboBox(this, wxID_ANY, wxEmptyString, wxPoint(350, 10), wxSize(100, 20), choices);
 	exchangeDropdown->SetValue(choices[0]);
 
-	search = new wxComboBox(this, wxID_ANY, wxEmptyString, wxPoint(10, 10), wxSize(200, 30), choices1, wxTE_PROCESS_ENTER);
-	search->AutoComplete(NULL);
-	search->Bind(wxEVT_TEXT, &DashBoard::OnTxtChangeInSearchBar, this);
-	search->Bind(wxEVT_TEXT_ENTER, &DashBoard::OnTxtEnterInSearchBar, this);
-	search->Bind(wxEVT_COMBOBOX_DROPDOWN, &DashBoard::OnDropDown, this);
-
 	searchBar = new SearchBar(this, wxID_ANY, wxPoint(50, 50), wxSize(200, 20));
 	searchBar->setList(list);
-	searchBar->BindEvent(EVENT::TEXT, std::bind(&DashBoard::OnTxtChangeInSearchBar1, this));
-	searchBar->BindEvent(EVENT::TEXT_ENTER, std::bind(&DashBoard::OnTxtEnterInSearchBar1, this));
+	searchBar->BindEvent(EVENT::TEXT, std::bind(&DashBoard::OnTxtChangeInSearchBar, this));
+	searchBar->BindEvent(EVENT::TEXT_ENTER, std::bind(&DashBoard::OnTxtEnterInSearchBar, this));
 
 	wxGridBagSizer* sizer = new wxGridBagSizer();
-	sizer->Add(search,wxGBPosition(1,10),wxGBSpan(3,20), wxALL);
 	sizer->Add(exchangeDropdown, wxGBPosition(1, 35), wxGBSpan(2, 10), wxALL);
 	sizer->Add(image,wxGBPosition(10,3),wxGBSpan(50,80), wxALL);
 	this->SetSizer(sizer);
@@ -91,7 +60,6 @@ DashBoard::DashBoard(wxWindow* console) : wxFrame(nullptr, wxID_ANY,"App",wxPoin
 
 DashBoard::~DashBoard()
 {
-	search->Destroy();
 	exchangeDropdown->Destroy();
 	image->Destroy();
 	delete searchBar;
@@ -178,7 +146,6 @@ void DashBoard::createSymbolMap()
 					if (!node->nodes.contains(ch))
 					{
 						std::shared_ptr<Node> temp = std::make_shared<Node>(node->str + ch);
-						//temp->setChar(node->str + ch);
 						node->nodes.insert({ ch,temp });
 					}
 
@@ -196,94 +163,7 @@ void DashBoard::createSymbolMap()
 	}
 }
 
-void DashBoard::OnTxtChangeInSearchBar(wxCommandEvent& event)
-{
-	int depth = searchDepth,index = 0,nextIndex = 0;
-	std::string searchstr = search->GetValue().ToStdString();
-	for (int i = 0; i < searchstr.length(); i++)
-	{
-		searchstr[i] = std::tolower(searchstr[i]);
-	}
-	std::string exchange = exchangeDropdown->GetValue().ToStdString();
-
-	std::vector<std::string> wordList;
-
-	std::stringstream ss(searchstr);
-	std::string item;
-	while (std::getline(ss, item, ' '))
-	{
-		wordList.push_back(item);
-	}
-
-	std::vector<int> indices;
-	std::map<int, int> MapOfIndices;
-
-	for (std::vector<std::string>::iterator word = wordList.begin(); word != wordList.end(); word++)
-	{
-		std::shared_ptr<Node> node;
-		node = nodeTree[exchange];
-		for (int x = 0; x < word->size(); x++)
-		{
-			char ch = word->at(x);
-			if (!node->nodes.contains(ch))
-			{
-				break;
-			}
-			node = node->nodes[ch];
-		}
-		for (auto it = node->indices.begin(); it != node->indices.end(); it++)
-		{
-			for (auto it1 = it->begin(); it1 != it->end(); it1++)
-			{
-				if (MapOfIndices.contains(*it1))
-				{
-					MapOfIndices[*it1]++;
-				}
-				else
-				{
-					MapOfIndices.insert({ *it1,1 });
-				}
-				/*auto pos = std::find(indices.begin(), indices.end(), *it1);
-				if (pos != indices.end())
-				{
-					indices.erase(pos);
-					indices.insert(indices.begin(), *it1);
-				}
-				else
-				{
-					indices.push_back(*it1);
-				}	*/				
-			}
-		}
-	}
-	
-	/*auto vec = SortMapOnValues(MapOfIndices);
-	for (auto it = vec.rbegin(); it != vec.rend(); it++)
-	{
-		indices.push_back(it->first);
-	}*/
-
-	auto it = symbols[exchange].begin();
-	std::advance(it, index);
-
-	for (int i = 0; i < 5; i++)
-	{
-		if (i >= indices.size())
-			break;
-		auto j = symbols[exchange].begin();
-		std::advance(j, indices[i]);
-		search->SetString(i, j->first);
-		search->AutoComplete(NULL);
-	}
-	
-}
-
-void DashBoard::OnDropDown(wxCommandEvent& event)
-{
-	auto val = search->GetValue();
-}
-
-void DashBoard::OnTxtChangeInSearchBar1()
+void DashBoard::OnTxtChangeInSearchBar()
 {
 	int depth = searchDepth, index = 0, nextIndex = 0;
 	std::string searchstr = searchBar->getValue();
@@ -325,16 +205,6 @@ void DashBoard::OnTxtChangeInSearchBar1()
 			for (auto it1 = it->begin(); it1 != it->end(); it1++)
 			{
 				wordIndices.insert(*it1);
-				/*if (MapOfIndices.contains(*it1))
-				{
-					MapOfIndices[*it1]++;
-					if(MapOfIndices[*it1] >= 3)
-						Console::add(LogType::MSG_STRING, std::to_string(*it1));
-				}
-				else
-				{
-					MapOfIndices.insert({ *it1,1 });
-				}*/
 			}
 		}
 		vecOfIndicesSet.push_back(wordIndices);
@@ -375,7 +245,7 @@ void DashBoard::OnTxtChangeInSearchBar1()
 	}
 	std::vector<int> temp;
 	temp = indices;
-	int i = 0;
+	int i = 0,pos = 0;
 	for (auto it = indices.begin(); it != indices.end(); it++)
 	{
 		auto j = symbols[exchange].begin();
@@ -390,9 +260,14 @@ void DashBoard::OnTxtChangeInSearchBar1()
 			int val = *it;
 			indices.erase(it);
 			indices.insert(indices.begin() + i, val);
-			it = indices.begin() + i;
+			if(pos == 0)
+				it = indices.begin();
+			else
+				it = indices.begin() + pos;
+			//pos--;
 			i++;
 		}
+		pos++;
 	}
 
 	for (int i = 0; i < 5; i++)
@@ -405,18 +280,7 @@ void DashBoard::OnTxtChangeInSearchBar1()
 	}
 }
 
-void DashBoard::OnTxtEnterInSearchBar(wxCommandEvent& event)
-{
-	std::string value = search->GetValue().ToStdString();
-	std::string exchange = exchangeDropdown->GetValue().ToStdString();
-	auto it = symbols[exchange].find(value);
-	if (it != symbols[exchange].end())
-	{
-		RefreshDashboard(it->first,it->second);
-	}
-}
-
-void DashBoard::OnTxtEnterInSearchBar1()
+void DashBoard::OnTxtEnterInSearchBar()
 {
 	std::string value = searchBar->getValue();
 	std::string exchange = exchangeDropdown->GetValue().ToStdString();
